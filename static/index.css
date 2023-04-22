@@ -23,3 +23,7 @@ ol {
   margin-bottom: 2em;
   color: #1d1d1d;
 }
+
+.paste-area {
+  width: 100%
+}
