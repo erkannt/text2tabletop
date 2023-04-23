@@ -9,17 +9,22 @@
       <h2>{{unit.name}}</h2>
       <span>{{unit.quality}}/{{unit.defense}}</span>
     </div>
-    <div class="unit__rules">{{unit.special_rules}}</div>
-    <div class="unit__remaining-stats">
-      {{unit.models}} {% if unit.models == "1" %} model {% else %} models{%
-      endif %} &centerdot; {{unit.points}} points {% if unit.count != "1" %}
-      &centerdot; {{unit.count}} copies {% endif %}
+    <div class="unit__wrapper">
+      <div class="unit__main">
+        <div class="unit__rules">{{unit.special_rules}}</div>
+        <ul class="unit__weapons">
+          {% for weapon in unit.weapons %}
+          <li>⚔ {{weapon}}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="unit__remaining-stats">
+        <span>{{unit.points}} pts </span>
+
+        {% if unit.models != "1" %} <span>{{unit.models}} models</span>{% endif
+        %} {% if unit.count != "1" %}<span>{{unit.count}}x</span>{% endif %}
+      </div>
     </div>
-    <ul class="unit__weapons">
-      {% for weapon in unit.weapons %}
-      <li>⚔ {{weapon}}</li>
-      {% endfor %}
-    </ul>
   </li>
   {% endfor %}
 </ol>

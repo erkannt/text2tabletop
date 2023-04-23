@@ -72,7 +72,7 @@ fn parse_army_list(input: &String) -> ArmyList {
     }
 }
 
-fn extract_single_or(name: &str, re: Regex, input: &str, default: &str) -> String {
+fn extract_single_or(default: &str, re: Regex, input: &str) -> String {
     re.captures(input)
         .and_then(|cap| cap.get(1))
         .and_then(|mat| input.get(mat.range()))
@@ -113,12 +113,7 @@ fn parse_units(input: &str) -> Vec<Unit> {
                         Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
                         &partial.0,
                     ),
-                    count: extract_single_or(
-                        "count",
-                        Regex::new(r"^([\d+])x ").unwrap(),
-                        &partial.0,
-                        "1",
-                    ),
+                    count: extract_single_or("1", Regex::new(r"^([\d+])x ").unwrap(), &partial.0),
                     models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
                     points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
                     quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),

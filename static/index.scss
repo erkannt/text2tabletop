@@ -1,5 +1,5 @@
 html {
-  max-width: 70ch;
+  max-width: 100ch;
   padding: 3em 1em;
   margin: auto;
   line-height: 1.75;
@@ -107,6 +107,11 @@ ol {
   }
 }
 
+.unit__wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
 .unit__rules {
   margin-bottom: 0.2rem;
 }
@@ -114,7 +119,9 @@ ol {
 .unit__remaining-stats {
   font-weight: lighter;
   font-size: 0.8rem;
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
 }
 
 .unit__weapons {
