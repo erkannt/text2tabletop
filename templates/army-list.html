@@ -1,12 +1,17 @@
 <h1>{{name}}</h1>
 <p>{{system}} &mdash; {{points}}pts</p>
-<ul>
+<ol>
   {% for unit in units %}
   <li>
     <h2>{{unit.name}}</h2>
     <p>{{unit.models}} models &centerdot; {{unit.points}} points</p>
     <p>Q{{unit.quality}} D{{unit.defense}}</p>
     <p>{{unit.special_rules}}</p>
+    <ul>
+      {% for weapon in unit.weapons %}
+      <li>{{weapon}}</li>
+      {% endfor %}
+    </ul>
   </li>
   {% endfor %}
-</ul>
+</ol>

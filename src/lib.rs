@@ -38,6 +38,7 @@ struct Unit {
     special_rules: String,
     quality: String,
     defense: String,
+    weapons: Vec<String>,
 }
 
 impl std::fmt::Display for Unit {
@@ -112,6 +113,11 @@ fn parse_units(input: &str) -> Vec<Unit> {
                         Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
                         &partial.0,
                     ),
+                    weapons: line
+                        .split("), ")
+                        .into_iter()
+                        .map(|extract| format!("{})", extract))
+                        .collect(),
                 })
             }
         }
