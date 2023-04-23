@@ -31,11 +31,13 @@ struct ArmyList {
 }
 
 #[derive(Deserialize)]
-struct Unit(String);
+struct Unit {
+    name: String,
+}
 
 impl std::fmt::Display for Unit {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "{}", self)
     }
 }
 
@@ -102,7 +104,13 @@ fn parse_units(input: &str) -> Vec<Unit> {
         if line.is_empty() {
             return state;
         }
-        state.completed.push(Unit(line.to_string()));
+        match state.partial {
+            None => state.partial = Some(PartialUnit(line.to_string())),
+            Some(partial) => {
+                state.partial = None;
+                state.completed.push(Unit { name: partial.0 })
+            }
+        }
         return state;
     }
 
