@@ -3,16 +3,23 @@
 use askama::Template;
 use regex::Regex;
 use seed::{prelude::*, *};
+use serde::Deserialize;
+
+const STORAGE_KEY: &str = "text2tabletop";
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
-    Model { army_list: None }
+    Model {
+        stored_input: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
+        army_list: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
+    }
 }
 
 struct Model {
+    stored_input: String,
     army_list: Option<ArmyList>,
 }
 
-#[derive(Template)]
+#[derive(Template, Deserialize)]
 #[template(path = "army-list.html")]
 struct ArmyList {
     name: String,
@@ -32,7 +39,9 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 name: parse_name(&input).to_string(),
                 points: parse_points(&input).to_string(),
                 system: parse_system(&input).to_string(),
-            })
+            });
+            LocalStorage::insert(STORAGE_KEY, &input).expect("save to LocalStorage failed");
+            model.stored_input = input;
         }
     }
 }
@@ -69,7 +78,7 @@ fn view(model: &Model) -> Node<Msg> {
     div![
         textarea![
             C!["paste-area"],
-            attrs! {At::Rows => 10},
+            attrs! {At::Rows => 10, At::Value => model.stored_input},
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)
         ],
