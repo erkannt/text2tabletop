@@ -1,5 +1,6 @@
 #![allow(clippy::wildcard_imports)]
 
+use regex::Regex;
 use seed::{prelude::*, *};
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
@@ -26,7 +27,7 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
         Msg::ArmyUpdated(input) => {
             model.army_list = Some(ArmyList {
-                name: "".to_string(),
+                name: parse_name(&input).to_string(),
                 points: 0,
                 system: "".to_string(),
                 rest: input,
@@ -35,9 +36,16 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     }
 }
 
+fn parse_name(input: &String) -> &str {
+    let re = Regex::new(r"\[?([A-Za-z]+)").unwrap();
+    re.find(input)
+        .and_then(|mat| input.get(mat.range()))
+        .unwrap_or("[error: can't extract name]")
+}
+
 fn view(model: &Model) -> Node<Msg> {
     let rendered_list = match &model.army_list {
-        Some(a) => a.rest.clone(),
+        Some(a) => format!("<h1>{}</h1><p>{}</p>", a.name, a.rest),
         None => "".to_string(),
     };
     div![
@@ -47,7 +55,7 @@ fn view(model: &Model) -> Node<Msg> {
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)
         ],
-        div!(rendered_list)
+        raw!(&rendered_list)
     ]
 }
 
