@@ -1,2 +1,7 @@
 <h1>{{name}}</h1>
 <p>{{system}} &mdash; {{points}}pts</p>
+<ul>
+  {% for unit in units %}
+  <li>{{unit}}</li>
+  {% endfor %}
+</ul>

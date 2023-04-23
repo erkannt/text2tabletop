@@ -27,6 +27,16 @@ struct ArmyList {
     name: String,
     points: String,
     system: String,
+    units: Vec<Unit>,
+}
+
+#[derive(Deserialize)]
+struct Unit(String);
+
+impl std::fmt::Display for Unit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
 }
 
 #[derive(Clone)]
@@ -49,6 +59,7 @@ fn parse_army_list(input: &String) -> ArmyList {
         name: parse_name(&input).to_string(),
         points: parse_points(&input).to_string(),
         system: parse_system(&input).to_string(),
+        units: parse_units(&input),
     }
 }
 
@@ -74,6 +85,36 @@ fn parse_system(input: &str) -> &str {
         .and_then(|cap| cap.get(1))
         .and_then(|mat| input.get(mat.range()))
         .unwrap_or("[error: can't extract system]")
+}
+
+fn parse_units(input: &str) -> Vec<Unit> {
+    struct State {
+        partial: Option<PartialUnit>,
+        completed: Vec<Unit>,
+    }
+
+    struct PartialUnit(String);
+
+    fn handle_line(mut state: State, line: &str) -> State {
+        if line.starts_with("++") {
+            return state;
+        }
+        if line.is_empty() {
+            return state;
+        }
+        state.completed.push(Unit(line.to_string()));
+        return state;
+    }
+
+    let result = input.lines().fold(
+        State {
+            partial: None,
+            completed: vec![],
+        },
+        handle_line,
+    );
+
+    return result.completed;
 }
 
 fn view(model: &Model) -> Node<Msg> {
