@@ -1,5 +1,6 @@
 #![allow(clippy::wildcard_imports)]
 
+use askama::Template;
 use regex::Regex;
 use seed::{prelude::*, *};
 
@@ -11,6 +12,8 @@ struct Model {
     army_list: Option<ArmyList>,
 }
 
+#[derive(Template)]
+#[template(path = "army-list.html")]
 struct ArmyList {
     name: String,
     points: u16,
@@ -45,7 +48,7 @@ fn parse_name(input: &String) -> &str {
 
 fn view(model: &Model) -> Node<Msg> {
     let rendered_list = match &model.army_list {
-        Some(a) => format!("<h1>{}</h1><p>{}</p>", a.name, a.rest),
+        Some(a) => a.render().unwrap_or_else(|err| format!("{}", err)),
         None => "".to_string(),
     };
     div![
