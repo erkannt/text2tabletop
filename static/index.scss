@@ -81,7 +81,7 @@ ol {
 
 .units {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   list-style: none;
   padding: 0;
