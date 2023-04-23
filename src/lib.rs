@@ -33,6 +33,7 @@ struct ArmyList {
 #[derive(Deserialize)]
 struct Unit {
     name: String,
+    count: String,
     models: String,
     points: String,
     special_rules: String,
@@ -71,6 +72,14 @@ fn parse_army_list(input: &String) -> ArmyList {
     }
 }
 
+fn extract_single_or(name: &str, re: Regex, input: &str, default: &str) -> String {
+    re.captures(input)
+        .and_then(|cap| cap.get(1))
+        .and_then(|mat| input.get(mat.range()))
+        .map(|s| s.to_string())
+        .unwrap_or(default.to_string())
+}
+
 fn extract_single(name: &str, re: Regex, input: &str) -> String {
     re.captures(input)
         .and_then(|cap| cap.get(1))
@@ -99,7 +108,17 @@ fn parse_units(input: &str) -> Vec<Unit> {
             Some(partial) => {
                 state.partial = None;
                 state.completed.push(Unit {
-                    name: extract_single("name", Regex::new(r"^([^\[]+) \[").unwrap(), &partial.0),
+                    name: extract_single(
+                        "name",
+                        Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
+                        &partial.0,
+                    ),
+                    count: extract_single_or(
+                        "count",
+                        Regex::new(r"^([\d+])x ").unwrap(),
+                        &partial.0,
+                        "1",
+                    ),
                     models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
                     points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
                     quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),
