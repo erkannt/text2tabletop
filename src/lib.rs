@@ -142,7 +142,7 @@ fn view(model: &Model) -> Node<Msg> {
     };
     div![
         textarea![
-            C!["paste-area"],
+            C!["paste-area", "inputs"],
             attrs! {At::Rows => 10, At::Value => model.stored_input},
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)

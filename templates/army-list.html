@@ -1,15 +1,21 @@
-<h1>{{name}}</h1>
-<p>{{system}} &mdash; {{points}}pts</p>
-<ol>
+<header class="army_list__header">
+  <h1>{{name}}</h1>
+  <span class="army_list__meta">{{points}} {{system}}</span>
+</header>
+<ol class="units">
   {% for unit in units %}
-  <li>
-    <h2>{{unit.name}}</h2>
-    <p>{{unit.models}} models &centerdot; {{unit.points}} points</p>
-    <p>Q{{unit.quality}} D{{unit.defense}}</p>
-    <p>{{unit.special_rules}}</p>
-    <ul>
+  <li class="unit">
+    <div class="unit__headline">
+      <h2>{{unit.name}}</h2>
+      <span>{{unit.quality}}/{{unit.defense}}</span>
+    </div>
+    <div class="unit__rules">{{unit.special_rules}}</div>
+    <div class="unit__remaining-stats">
+      {{unit.models}} models &centerdot; {{unit.points}} points
+    </div>
+    <ul class="unit__weapons">
       {% for weapon in unit.weapons %}
-      <li>{{weapon}}</li>
+      <li>⚔ {{weapon}}</li>
       {% endfor %}
     </ul>
   </li>

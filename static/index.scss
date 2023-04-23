@@ -1,0 +1,123 @@
+html {
+  max-width: 70ch;
+  padding: 3em 1em;
+  margin: auto;
+  line-height: 1.75;
+  font-size: 1.25em;
+  font-family: Seravek, "Gill Sans Nova", Ubuntu, Calibri, "DejaVu Sans",
+    source-sans-pro, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 3em 0 1em;
+  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+    "URW Bookman L", "Georgia Pro", Georgia, serif;
+}
+
+p,
+ul,
+ol {
+  margin-bottom: 2em;
+  color: #1d1d1d;
+}
+
+.instructions,
+.inputs {
+  margin-bottom: 3rem;
+  @media print {
+    display: none;
+  }
+}
+
+.paste-area {
+  width: 100%;
+}
+
+@media print {
+  html,
+  body {
+    font-size: 11pt;
+    max-width: unset;
+  }
+}
+
+.army_list {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+  font-size: 1rem;
+}
+
+.army_list__header {
+  display: flex;
+  justify-content: space-between;
+  border-top: 0.2rem solid black;
+  padding-top: 0.4rem;
+  margin-bottom: 3rem;
+  h1 {
+    font-size: 2rem;
+    line-height: 1;
+  }
+}
+
+.army_list__meta {
+  font-weight: lighter;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.units {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+}
+
+.unit {
+  border-top: 0.1rem solid black;
+  padding-top: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.unit__headline {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  h2,
+  span {
+    font-size: 1.5rem;
+    line-height: 1;
+    font-weight: bold;
+    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+      "URW Bookman L", "Georgia Pro", Georgia, serif;
+  }
+}
+
+.unit__rules {
+  margin-bottom: 0.2rem;
+}
+
+.unit__remaining-stats {
+  font-weight: lighter;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.unit__weapons {
+  list-style: none;
+  padding: 0;
+}

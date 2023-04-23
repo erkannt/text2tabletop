@@ -6,21 +6,23 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link data-trunk rel="scss" href="static/index.css" />
+    <link data-trunk rel="scss" href="static/index.scss" />
   </head>
 
   <body>
-    <h1>text2tabletop</h1>
-    <p>Generate pretty PDFs for your OnePageRules armies.</p>
-    <ol>
-      <li>
-        Build an armylist using
-        <a href="https://army-forge.onepagerules.com/">Army Forge</a>
-      </li>
-      <li>Use <i>Share as Text</i> in the Army Forge menu</li>
-      <li>Paste below</li>
-    </ol>
-    <div id="app"></div>
+    <section class="instructions">
+      <h1>text2tabletop</h1>
+      <p>Generate pretty PDFs for your OnePageRules armies.</p>
+      <ol>
+        <li>
+          Build an armylist using
+          <a href="https://army-forge.onepagerules.com/">Army Forge</a>
+        </li>
+        <li>Use <i>Share as Text</i> in the Army Forge menu</li>
+        <li>Paste below</li>
+      </ol>
+    </section>
+    <section class="army_list" id="app"></section>
     <script type="module">
       import init from "/pkg/package.js";
       init("/pkg/package_bg.wasm");
