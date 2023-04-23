@@ -10,7 +10,9 @@ const STORAGE_KEY: &str = "text2tabletop";
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
     Model {
         stored_input: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
-        army_list: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
+        army_list: LocalStorage::get(STORAGE_KEY)
+            .ok()
+            .map(|input: String| parse_army_list(&input)),
     }
 }
 
@@ -35,18 +37,22 @@ enum Msg {
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
         Msg::ArmyUpdated(input) => {
-            model.army_list = Some(ArmyList {
-                name: parse_name(&input).to_string(),
-                points: parse_points(&input).to_string(),
-                system: parse_system(&input).to_string(),
-            });
+            model.army_list = Some(parse_army_list(&input));
             LocalStorage::insert(STORAGE_KEY, &input).expect("save to LocalStorage failed");
             model.stored_input = input;
         }
     }
 }
 
-fn parse_name(input: &String) -> &str {
+fn parse_army_list(input: &String) -> ArmyList {
+    ArmyList {
+        name: parse_name(&input).to_string(),
+        points: parse_points(&input).to_string(),
+        system: parse_system(&input).to_string(),
+    }
+}
+
+fn parse_name(input: &str) -> &str {
     let re = Regex::new(r"^\+\+ (.*) \[").unwrap();
     re.captures(input)
         .and_then(|cap| cap.get(1))
@@ -54,7 +60,7 @@ fn parse_name(input: &String) -> &str {
         .unwrap_or("[error: can't extract name]")
 }
 
-fn parse_points(input: &String) -> &str {
+fn parse_points(input: &str) -> &str {
     let re = Regex::new(r"([\d]+)pts").unwrap();
     re.captures(input)
         .and_then(|cap| cap.get(1))
@@ -62,7 +68,7 @@ fn parse_points(input: &String) -> &str {
         .unwrap_or("[error: can't extract points]")
 }
 
-fn parse_system(input: &String) -> &str {
+fn parse_system(input: &str) -> &str {
     let re = Regex::new(r"\[([[:alpha:]]+) ").unwrap();
     re.captures(input)
         .and_then(|cap| cap.get(1))
