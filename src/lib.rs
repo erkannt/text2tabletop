@@ -33,6 +33,11 @@ struct ArmyList {
 #[derive(Deserialize)]
 struct Unit {
     name: String,
+    models: String,
+    points: String,
+    special_rules: String,
+    quality: String,
+    defense: String,
 }
 
 impl std::fmt::Display for Unit {
@@ -94,6 +99,19 @@ fn parse_units(input: &str) -> Vec<Unit> {
                 state.partial = None;
                 state.completed.push(Unit {
                     name: extract_single("name", Regex::new(r"^([^\[]+) \[").unwrap(), &partial.0),
+                    models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
+                    points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
+                    quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),
+                    defense: extract_single(
+                        "defense",
+                        Regex::new(r"D(\d+)\+").unwrap(),
+                        &partial.0,
+                    ),
+                    special_rules: extract_single(
+                        "special_rules",
+                        Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
+                        &partial.0,
+                    ),
                 })
             }
         }
