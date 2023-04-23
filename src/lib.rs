@@ -61,7 +61,7 @@ fn parse_name(input: &str) -> &str {
 }
 
 fn parse_points(input: &str) -> &str {
-    let re = Regex::new(r"([\d]+)pts").unwrap();
+    let re = Regex::new(r"([\d]+)pts\] \+\+").unwrap();
     re.captures(input)
         .and_then(|cap| cap.get(1))
         .and_then(|mat| input.get(mat.range()))
