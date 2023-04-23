@@ -3,13 +3,18 @@
 use seed::{prelude::*, *};
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
-    Model {
-        army: ("".to_string()),
-    }
+    Model { army_list: None }
 }
 
 struct Model {
-    army: String,
+    army_list: Option<ArmyList>,
+}
+
+struct ArmyList {
+    name: String,
+    points: u16,
+    system: String,
+    rest: String,
 }
 
 #[derive(Clone)]
@@ -19,11 +24,22 @@ enum Msg {
 
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
-        Msg::ArmyUpdated(input) => model.army = input,
+        Msg::ArmyUpdated(input) => {
+            model.army_list = Some(ArmyList {
+                name: "".to_string(),
+                points: 0,
+                system: "".to_string(),
+                rest: input,
+            })
+        }
     }
 }
 
 fn view(model: &Model) -> Node<Msg> {
+    let rendered_list = match &model.army_list {
+        Some(a) => a.rest.clone(),
+        None => "".to_string(),
+    };
     div![
         textarea![
             C!["paste-area"],
@@ -31,7 +47,7 @@ fn view(model: &Model) -> Node<Msg> {
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)
         ],
-        p!(model.army.clone())
+        div!(rendered_list)
     ]
 }
 
