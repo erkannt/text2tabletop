@@ -16,9 +16,8 @@ struct Model {
 #[template(path = "army-list.html")]
 struct ArmyList {
     name: String,
-    points: u16,
+    points: String,
     system: String,
-    rest: String,
 }
 
 #[derive(Clone)]
@@ -31,19 +30,35 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
         Msg::ArmyUpdated(input) => {
             model.army_list = Some(ArmyList {
                 name: parse_name(&input).to_string(),
-                points: 0,
-                system: "".to_string(),
-                rest: input,
+                points: parse_points(&input).to_string(),
+                system: parse_system(&input).to_string(),
             })
         }
     }
 }
 
 fn parse_name(input: &String) -> &str {
-    let re = Regex::new(r"\[?([A-Za-z]+)").unwrap();
-    re.find(input)
+    let re = Regex::new(r"^\+\+ (.*) \[").unwrap();
+    re.captures(input)
+        .and_then(|cap| cap.get(1))
         .and_then(|mat| input.get(mat.range()))
         .unwrap_or("[error: can't extract name]")
+}
+
+fn parse_points(input: &String) -> &str {
+    let re = Regex::new(r"([\d]+)pts").unwrap();
+    re.captures(input)
+        .and_then(|cap| cap.get(1))
+        .and_then(|mat| input.get(mat.range()))
+        .unwrap_or("[error: can't extract points]")
+}
+
+fn parse_system(input: &String) -> &str {
+    let re = Regex::new(r"\[([[:alpha:]]+) ").unwrap();
+    re.captures(input)
+        .and_then(|cap| cap.get(1))
+        .and_then(|mat| input.get(mat.range()))
+        .unwrap_or("[error: can't extract system]")
 }
 
 fn view(model: &Model) -> Node<Msg> {
