@@ -58,35 +58,19 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
 
 fn parse_army_list(input: &String) -> ArmyList {
     ArmyList {
-        name: parse_name(&input).to_string(),
-        points: parse_points(&input).to_string(),
-        system: parse_system(&input).to_string(),
+        name: extract_single("name", Regex::new(r"^\+\+ (.*) \[").unwrap(), &input),
+        points: extract_single("point", Regex::new(r"([\d]+)pts\] \+\+").unwrap(), &input),
+        system: extract_single("system", Regex::new(r"\[([[:alpha:]]+) ").unwrap(), &input),
         units: parse_units(&input),
     }
 }
 
-fn parse_name(input: &str) -> &str {
-    let re = Regex::new(r"^\+\+ (.*) \[").unwrap();
+fn extract_single(name: &str, re: Regex, input: &str) -> String {
     re.captures(input)
         .and_then(|cap| cap.get(1))
         .and_then(|mat| input.get(mat.range()))
-        .unwrap_or("[error: can't extract name]")
-}
-
-fn parse_points(input: &str) -> &str {
-    let re = Regex::new(r"([\d]+)pts\] \+\+").unwrap();
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .unwrap_or("[error: can't extract points]")
-}
-
-fn parse_system(input: &str) -> &str {
-    let re = Regex::new(r"\[([[:alpha:]]+) ").unwrap();
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .unwrap_or("[error: can't extract system]")
+        .map(|s| s.to_string())
+        .unwrap_or(format!("[error: can't extract {}]", name))
 }
 
 fn parse_units(input: &str) -> Vec<Unit> {
