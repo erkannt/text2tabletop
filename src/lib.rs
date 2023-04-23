@@ -92,7 +92,9 @@ fn parse_units(input: &str) -> Vec<Unit> {
             None => state.partial = Some(PartialUnit(line.to_string())),
             Some(partial) => {
                 state.partial = None;
-                state.completed.push(Unit { name: partial.0 })
+                state.completed.push(Unit {
+                    name: extract_single("name", Regex::new(r"^([^\[]+) \[").unwrap(), &partial.0),
+                })
             }
         }
         return state;
