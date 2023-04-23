@@ -11,7 +11,8 @@
     </div>
     <div class="unit__rules">{{unit.special_rules}}</div>
     <div class="unit__remaining-stats">
-      {{unit.models}} models &centerdot; {{unit.points}} points
+      {{unit.models}} {% if unit.models == "1" %} model {% else %} models{%
+      endif %} &centerdot; {{unit.points}} points
     </div>
     <ul class="unit__weapons">
       {% for weapon in unit.weapons %}
