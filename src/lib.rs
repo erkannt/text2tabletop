@@ -21,15 +21,17 @@ struct Model {
     army_list: Option<ArmyList>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Inputs {
     army: String,
+    spells: String,
 }
 
 impl Default for Inputs {
     fn default() -> Self {
         Self {
             army: Default::default(),
+            spells: Default::default(),
         }
     }
 }
@@ -64,16 +66,28 @@ impl std::fmt::Display for Unit {
 #[derive(Clone)]
 enum Msg {
     ArmyUpdated(String),
+    SpellsUpdated(String),
 }
 
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
         Msg::ArmyUpdated(army_input) => {
+            let old_inputs = model.inputs.clone();
             model.army_list = Some(parse_army_list(&army_input));
-            model.inputs = Inputs { army: army_input };
-            LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
+            model.inputs = Inputs {
+                army: army_input,
+                ..old_inputs
+            };
+        }
+        Msg::SpellsUpdated(spells_input) => {
+            let old_inputs = model.inputs.clone();
+            model.inputs = Inputs {
+                spells: spells_input,
+                ..old_inputs
+            };
         }
     }
+    LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
 }
 
 fn parse_army_list(input: &String) -> ArmyList {
@@ -178,7 +192,9 @@ fn view(model: &Model) -> Node<Msg> {
         label![attrs![At::For => "spells"], "Spells"],
         textarea![
             C!["paste-area", "inputs"],
-            attrs! {At::Id => "spells", At::Rows => 10},
+            attrs! {At::Id => "spells", At::Rows => 10, At::Value => model.inputs.spells},
+            input_ev(Ev::Change, Msg::SpellsUpdated),
+            input_ev(Ev::KeyUp, Msg::SpellsUpdated)
         ],
         raw!(&rendered_list)
     ]
