@@ -11,6 +11,7 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable
           target: wasm32-unknown-unknown
 
       - uses: jetli/trunk-action@v0.4.0
