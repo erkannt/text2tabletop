@@ -3,13 +3,13 @@
 use askama::Template;
 use regex::Regex;
 use seed::{prelude::*, *};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 const STORAGE_KEY: &str = "text2tabletop";
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
     Model {
-        stored_input: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
+        inputs: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
         army_list: LocalStorage::get(STORAGE_KEY)
             .ok()
             .map(|input: String| parse_army_list(&input)),
@@ -17,8 +17,21 @@ fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
 }
 
 struct Model {
-    stored_input: String,
+    inputs: Inputs,
     army_list: Option<ArmyList>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct Inputs {
+    army: String,
+}
+
+impl Default for Inputs {
+    fn default() -> Self {
+        Self {
+            army: Default::default(),
+        }
+    }
 }
 
 #[derive(Template, Deserialize)]
@@ -55,10 +68,10 @@ enum Msg {
 
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
-        Msg::ArmyUpdated(input) => {
-            model.army_list = Some(parse_army_list(&input));
-            LocalStorage::insert(STORAGE_KEY, &input).expect("save to LocalStorage failed");
-            model.stored_input = input;
+        Msg::ArmyUpdated(army_input) => {
+            model.army_list = Some(parse_army_list(&army_input));
+            model.inputs = Inputs { army: army_input };
+            LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
         }
     }
 }
@@ -158,7 +171,7 @@ fn view(model: &Model) -> Node<Msg> {
         label![attrs![At::For => "list"], "Army"],
         textarea![
             C!["paste-area", "inputs"],
-            attrs! {At::Id => "list", At::Rows => 20, At::Value => model.stored_input},
+            attrs! {At::Id => "list", At::Rows => 20, At::Value => model.inputs.army},
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)
         ],
