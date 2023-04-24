@@ -8,12 +8,12 @@ use serde::{Deserialize, Serialize};
 const STORAGE_KEY: &str = "text2tabletop";
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
-    Model {
-        inputs: LocalStorage::get(STORAGE_KEY).unwrap_or_default(),
-        army_list: LocalStorage::get(STORAGE_KEY)
-            .ok()
-            .map(|input: String| parse_army_list(&input)),
-    }
+    let inputs: Inputs = LocalStorage::get(STORAGE_KEY).unwrap_or_default();
+    let army_list = match inputs.army.trim() {
+        "" => None,
+        _ => Some(parse_army_list(&inputs.army)),
+    };
+    Model { inputs, army_list }
 }
 
 struct Model {
