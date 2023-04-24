@@ -155,11 +155,17 @@ fn view(model: &Model) -> Node<Msg> {
         None => "".to_string(),
     };
     div![
+        label![attrs![At::For => "list"], "Army"],
         textarea![
             C!["paste-area", "inputs"],
-            attrs! {At::Rows => 10, At::Value => model.stored_input},
+            attrs! {At::Id => "list", At::Rows => 20, At::Value => model.stored_input},
             input_ev(Ev::Change, Msg::ArmyUpdated),
             input_ev(Ev::KeyUp, Msg::ArmyUpdated)
+        ],
+        label![attrs![At::For => "spells"], "Spells"],
+        textarea![
+            C!["paste-area", "inputs"],
+            attrs! {At::Id => "spells", At::Rows => 10},
         ],
         raw!(&rendered_list)
     ]
