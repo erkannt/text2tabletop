@@ -9,16 +9,21 @@ const STORAGE_KEY: &str = "text2tabletop";
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
     let inputs: Inputs = LocalStorage::get(STORAGE_KEY).unwrap_or_default();
-    let army_list = match inputs.army.trim() {
+    let army_list_view_model = match inputs.army.trim() {
         "" => None,
-        _ => Some(parse_army_list(&inputs.army)),
+        _ => Some(ArmyListViewModel {
+            army: parse_army(&inputs.army),
+        }),
     };
-    Model { inputs, army_list }
+    Model {
+        inputs,
+        army_list_view_model,
+    }
 }
 
 struct Model {
     inputs: Inputs,
-    army_list: Option<ArmyList>,
+    army_list_view_model: Option<ArmyListViewModel>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -38,7 +43,12 @@ impl Default for Inputs {
 
 #[derive(Template, Deserialize)]
 #[template(path = "army-list.html")]
-struct ArmyList {
+struct ArmyListViewModel {
+    army: Army,
+}
+
+#[derive(Deserialize)]
+struct Army {
     name: String,
     points: String,
     system: String,
@@ -73,11 +83,11 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     match msg {
         Msg::ArmyUpdated(army_input) => {
             let old_inputs = model.inputs.clone();
-            model.army_list = Some(parse_army_list(&army_input));
             model.inputs = Inputs {
                 army: army_input,
                 ..old_inputs
             };
+            model.army_list_view_model = Some(parse_army_list_view_model(&model.inputs));
         }
         Msg::SpellsUpdated(spells_input) => {
             let old_inputs = model.inputs.clone();
@@ -90,8 +100,14 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
 }
 
-fn parse_army_list(input: &String) -> ArmyList {
-    ArmyList {
+fn parse_army_list_view_model(inputs: &Inputs) -> ArmyListViewModel {
+    ArmyListViewModel {
+        army: parse_army(&inputs.army),
+    }
+}
+
+fn parse_army(input: &String) -> Army {
+    Army {
         name: extract_single("name", Regex::new(r"^\+\+ (.*) \[").unwrap(), &input),
         points: extract_single("point", Regex::new(r"([\d]+)pts\] \+\+").unwrap(), &input),
         system: extract_single("system", Regex::new(r"\[([[:alpha:]]+) ").unwrap(), &input),
@@ -177,8 +193,8 @@ fn parse_units(input: &str) -> Vec<Unit> {
 }
 
 fn view(model: &Model) -> Node<Msg> {
-    let rendered_list = match &model.army_list {
-        Some(a) => a.render().unwrap_or_else(|err| format!("{}", err)),
+    let rendered_list = match &model.army_list_view_model {
+        Some(view_model) => view_model.render().unwrap_or_else(|err| format!("{}", err)),
         None => "".to_string(),
     };
     div![

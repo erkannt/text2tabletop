@@ -1,9 +1,9 @@
 <header class="army_list__header">
-  <h1>{{name}}</h1>
-  <span class="army_list__meta">{{points}} {{system}}</span>
+  <h1>{{army.name}}</h1>
+  <span class="army_list__meta">{{army.points}} {{army.system}}</span>
 </header>
 <ol class="units">
-  {% for unit in units %}
+  {% for unit in army.units %}
   <li class="unit">
     <div class="unit__headline">
       <h2>{{unit.name}}</h2>
