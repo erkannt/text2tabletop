@@ -23,11 +23,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Install trunk
-        uses: actions-rs/install@v0.1
-        with:
-          crate: trunk
-          version: latest
-          use-tool-cache: true
+        uses: jetli/trunk-action@v0.4.0
 
       - name: Build 🔧
         run: trunk build --release
