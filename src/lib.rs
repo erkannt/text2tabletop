@@ -82,6 +82,7 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 spells: spells_input,
                 ..old_inputs
             };
+            model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
     }
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
