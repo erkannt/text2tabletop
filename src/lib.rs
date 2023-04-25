@@ -41,13 +41,12 @@ impl Default for Inputs {
     }
 }
 
-#[derive(Template, Deserialize)]
+#[derive(Template)]
 #[template(path = "army-list.html")]
 struct ArmyListViewModel {
     army: Army,
 }
 
-#[derive(Deserialize)]
 struct Army {
     name: String,
     points: String,
@@ -55,7 +54,6 @@ struct Army {
     units: Vec<Unit>,
 }
 
-#[derive(Deserialize)]
 struct Unit {
     name: String,
     count: String,
@@ -65,12 +63,6 @@ struct Unit {
     quality: String,
     defense: String,
     weapons: Vec<String>,
-}
-
-impl std::fmt::Display for Unit {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
-    }
 }
 
 #[derive(Clone)]
