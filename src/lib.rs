@@ -9,15 +9,9 @@ const STORAGE_KEY: &str = "text2tabletop";
 
 fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
     let inputs: Inputs = LocalStorage::get(STORAGE_KEY).unwrap_or_default();
-    let army_list_view_model = match inputs.army.trim() {
-        "" => None,
-        _ => Some(ArmyListViewModel {
-            army: parse_army(&inputs.army),
-        }),
-    };
     Model {
+        army_list_view_model: parse_army_list_view_model(&inputs),
         inputs,
-        army_list_view_model,
     }
 }
 
@@ -45,6 +39,7 @@ impl Default for Inputs {
 #[template(path = "army-list.html")]
 struct ArmyListViewModel {
     army: Army,
+    spells: Option<Vec<String>>,
 }
 
 struct Army {
@@ -79,7 +74,7 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 army: army_input,
                 ..old_inputs
             };
-            model.army_list_view_model = Some(parse_army_list_view_model(&model.inputs));
+            model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
         Msg::SpellsUpdated(spells_input) => {
             let old_inputs = model.inputs.clone();
@@ -92,10 +87,20 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
 }
 
-fn parse_army_list_view_model(inputs: &Inputs) -> ArmyListViewModel {
-    ArmyListViewModel {
-        army: parse_army(&inputs.army),
+fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
+    if inputs.army.trim().is_empty() {
+        return None;
     }
+    if inputs.spells.trim().is_empty() {
+        return Some(ArmyListViewModel {
+            army: parse_army(&inputs.army),
+            spells: None,
+        });
+    }
+    return Some(ArmyListViewModel {
+        army: parse_army(&inputs.army),
+        spells: Some(parse_spells(&inputs.spells)),
+    });
 }
 
 fn parse_army(input: &String) -> Army {
@@ -184,25 +189,37 @@ fn parse_units(input: &str) -> Vec<Unit> {
     return result.completed;
 }
 
+fn parse_spells(input: &str) -> Vec<String> {
+    input
+        .lines()
+        .into_iter()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| line.to_string())
+        .collect()
+}
+
 fn view(model: &Model) -> Node<Msg> {
     let rendered_list = match &model.army_list_view_model {
         Some(view_model) => view_model.render().unwrap_or_else(|err| format!("{}", err)),
         None => "".to_string(),
     };
     div![
-        label![attrs![At::For => "list"], "Army"],
-        textarea![
-            C!["paste-area", "inputs"],
-            attrs! {At::Id => "list", At::Rows => 20, At::Value => model.inputs.army},
-            input_ev(Ev::Change, Msg::ArmyUpdated),
-            input_ev(Ev::KeyUp, Msg::ArmyUpdated)
-        ],
-        label![attrs![At::For => "spells"], "Spells"],
-        textarea![
-            C!["paste-area", "inputs"],
-            attrs! {At::Id => "spells", At::Rows => 10, At::Value => model.inputs.spells},
-            input_ev(Ev::Change, Msg::SpellsUpdated),
-            input_ev(Ev::KeyUp, Msg::SpellsUpdated)
+        div![
+            C!["inputs"],
+            label![attrs![At::For => "list"], "Army"],
+            textarea![
+                C!["paste-area", "input"],
+                attrs! {At::Id => "list", At::Rows => 20, At::Value => model.inputs.army},
+                input_ev(Ev::Change, Msg::ArmyUpdated),
+                input_ev(Ev::KeyUp, Msg::ArmyUpdated)
+            ],
+            label![attrs![At::For => "spells"], "Spells"],
+            textarea![
+                C!["paste-area", "input"],
+                attrs! {At::Id => "spells", At::Rows => 10, At::Value => model.inputs.spells},
+                input_ev(Ev::Change, Msg::SpellsUpdated),
+                input_ev(Ev::KeyUp, Msg::SpellsUpdated)
+            ],
         ],
         raw!(&rendered_list)
     ]

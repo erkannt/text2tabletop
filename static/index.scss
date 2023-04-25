@@ -34,6 +34,10 @@ ol {
   }
 }
 
+.input {
+  margin-bottom: 2rem;
+}
+
 .paste-area {
   width: 100%;
 }
@@ -54,8 +58,7 @@ ol {
   h5,
   h6,
   p,
-  ul,
-  ol {
+  ul {
     margin: 0;
   }
   font-size: 1rem;
@@ -85,6 +88,7 @@ ol {
   gap: 2rem;
   list-style: none;
   padding: 0;
+  margin-bottom: 2rem;
 }
 
 .unit {
@@ -127,4 +131,28 @@ ol {
 .unit__weapons {
   list-style: none;
   padding: 0;
+}
+
+.spells {
+  border-top: 0.1rem solid black;
+  padding-top: 0.4rem;
+  margin-bottom: 1rem;
+  h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-weight: bold;
+    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+      "URW Bookman L", "Georgia Pro", Georgia, serif;
+  }
+}
+
+.spells__list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 0.4rem 2rem;
 }

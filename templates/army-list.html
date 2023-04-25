@@ -28,3 +28,13 @@
   </li>
   {% endfor %}
 </ol>
+{% match spells%} {%when Some with (spells)%}
+<div class="spells">
+  <h2>Spells</h2>
+  <ol class="spells__list">
+    {% for spell in spells %}
+    <li>{{spell}}</li>
+    {% endfor %}
+  </ol>
+  {%when None%} {% endmatch%}
+</div>
