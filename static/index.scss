@@ -182,5 +182,13 @@ ol {
   li {
     margin-bottom: 0.4rem;
     font-size: 0.8rem;
+    break-inside: avoid;
   }
+}
+
+@page {
+  margin-top: 2cm;
+  margin-left: 1cm;
+  margin-right: 1cm;
+  margin-bottom: 2cm;
 }
