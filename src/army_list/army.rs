@@ -89,10 +89,12 @@ fn parse_units(input: &str) -> Vec<Unit> {
 }
 
 fn parse_weapons(line: &str) -> Vec<String> {
-    let re = Regex::new(r".+ \(A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)").unwrap();
+    let re =
+        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)")
+            .unwrap();
 
     re.captures_iter(line)
-        .map(|cap| cap[0].to_string())
+        .map(|cap| cap[0].trim().to_string())
         .collect()
 }
 
@@ -118,6 +120,20 @@ mod tests {
     fn weapon_with_ap_and_rule() {
         let parsed = parse_weapons("Hand Weapon (A3, AP(1), Rending)");
         let expected = vec!["Hand Weapon (A3, AP(1), Rending)"];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn multiple_weapons() {
+        let parsed = parse_weapons("Gatling-Fists (18\", A3, AP(1)), Stomp (A2)");
+        let expected = vec!["Gatling-Fists (18\", A3, AP(1))", "Stomp (A2)"];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn multiple_models() {
+        let parsed = parse_weapons("2x Hand Weapon (A1)");
+        let expected = vec!["2x Hand Weapon (A1)"];
         assert_eq!(parsed, expected)
     }
 }
