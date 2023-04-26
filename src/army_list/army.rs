@@ -1,5 +1,9 @@
 use regex::Regex;
 
+use crate::army_list::regex_helpers::extract_single_or;
+
+use super::regex_helpers::extract_single;
+
 pub struct Army {
     pub name: String,
     pub points: String,
@@ -25,22 +29,6 @@ pub fn parse_army(input: &String) -> Army {
         system: extract_single("system", Regex::new(r"\[([[:alpha:]]+) ").unwrap(), &input),
         units: parse_units(&input),
     }
-}
-
-fn extract_single_or(default: &str, re: Regex, input: &str) -> String {
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .map(|s| s.to_string())
-        .unwrap_or(default.to_string())
-}
-
-fn extract_single(name: &str, re: Regex, input: &str) -> String {
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .map(|s| s.to_string())
-        .unwrap_or(format!("[error: can't extract {}]", name))
 }
 
 fn parse_units(input: &str) -> Vec<Unit> {
