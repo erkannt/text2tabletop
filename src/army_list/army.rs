@@ -19,7 +19,22 @@ pub struct Unit {
     pub special_rules: String,
     pub quality: String,
     pub defense: String,
-    pub weapons: Vec<String>,
+    pub weapons: Vec<Weapon>,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Weapon {
+    Melee(String),
+    Ranged(String),
+}
+
+impl std::fmt::Display for Weapon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Weapon::Melee(value) => write!(f, "⚔ {}", value),
+            Weapon::Ranged(value) => write!(f, "➶ {}", value),
+        }
+    }
 }
 
 pub fn parse_army(input: &String) -> Army {
@@ -88,52 +103,61 @@ fn parse_units(input: &str) -> Vec<Unit> {
     return result.completed;
 }
 
-fn parse_weapons(line: &str) -> Vec<String> {
+fn parse_weapons(line: &str) -> Vec<Weapon> {
     let re =
         Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)")
             .unwrap();
 
     re.captures_iter(line)
         .map(|cap| cap[0].trim().to_string())
+        .map(|weapon| match weapon.contains("\"") {
+            true => Weapon::Ranged(weapon),
+            false => Weapon::Melee(weapon),
+        })
         .collect()
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::army_list::army::parse_weapons;
+    use crate::army_list::army::{parse_weapons, Weapon};
 
     #[test]
     fn simple_weapon() {
         let parsed = parse_weapons("Hand Weapon (A3)");
-        let expected = vec!["Hand Weapon (A3)"];
+        let expected = vec![Weapon::Melee("Hand Weapon (A3)".to_string())];
         assert_eq!(parsed, expected)
     }
 
     #[test]
     fn weapon_with_armor_piercing() {
         let parsed = parse_weapons("Hand Weapon (A3, AP(1))");
-        let expected = vec!["Hand Weapon (A3, AP(1))"];
+        let expected = vec![Weapon::Melee("Hand Weapon (A3, AP(1))".to_string())];
         assert_eq!(parsed, expected)
     }
 
     #[test]
     fn weapon_with_ap_and_rule() {
         let parsed = parse_weapons("Hand Weapon (A3, AP(1), Rending)");
-        let expected = vec!["Hand Weapon (A3, AP(1), Rending)"];
+        let expected = vec![Weapon::Melee(
+            "Hand Weapon (A3, AP(1), Rending)".to_string(),
+        )];
         assert_eq!(parsed, expected)
     }
 
     #[test]
     fn multiple_weapons() {
         let parsed = parse_weapons("Gatling-Fists (18\", A3, AP(1)), Stomp (A2)");
-        let expected = vec!["Gatling-Fists (18\", A3, AP(1))", "Stomp (A2)"];
+        let expected = vec![
+            Weapon::Ranged("Gatling-Fists (18\", A3, AP(1))".to_string()),
+            Weapon::Melee("Stomp (A2)".to_string()),
+        ];
         assert_eq!(parsed, expected)
     }
 
     #[test]
     fn multiple_models() {
         let parsed = parse_weapons("2x Hand Weapon (A1)");
-        let expected = vec!["2x Hand Weapon (A1)"];
+        let expected = vec![Weapon::Melee("2x Hand Weapon (A1)".to_string())];
         assert_eq!(parsed, expected)
     }
 }
