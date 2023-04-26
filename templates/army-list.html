@@ -38,3 +38,13 @@
   </ol>
   {%when None%} {% endmatch%}
 </div>
+{% match rules%} {%when Some with (rules)%}
+<div class="rules">
+  <h2>Rules</h2>
+  <ol class="rules__list">
+    {% for rule in rules %}
+    <li>{{rule}}</li>
+    {% endfor %}
+  </ol>
+  {%when None%} {% endmatch%}
+</div>

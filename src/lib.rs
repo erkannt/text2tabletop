@@ -24,6 +24,7 @@ struct Model {
 struct Inputs {
     army: String,
     spells: String,
+    rules: String,
 }
 
 impl Default for Inputs {
@@ -31,6 +32,7 @@ impl Default for Inputs {
         Self {
             army: Default::default(),
             spells: Default::default(),
+            rules: Default::default(),
         }
     }
 }
@@ -40,6 +42,7 @@ impl Default for Inputs {
 struct ArmyListViewModel {
     army: Army,
     spells: Option<Vec<String>>,
+    rules: Option<Vec<String>>,
 }
 
 struct Army {
@@ -64,6 +67,7 @@ struct Unit {
 enum Msg {
     ArmyUpdated(String),
     SpellsUpdated(String),
+    RulesUpdated(String),
 }
 
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
@@ -84,6 +88,14 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
             };
             model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
+        Msg::RulesUpdated(rules_input) => {
+            let old_inputs = model.inputs.clone();
+            model.inputs = Inputs {
+                rules: rules_input,
+                ..old_inputs
+            };
+            model.army_list_view_model = parse_army_list_view_model(&model.inputs);
+        }
     }
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
 }
@@ -98,8 +110,16 @@ fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
         true => None,
         false => Some(parse_spells(&inputs.spells)),
     };
+    let rules = match &inputs.rules.trim().is_empty() {
+        true => None,
+        false => Some(parse_spells(&inputs.rules)),
+    };
 
-    return Some(ArmyListViewModel { army, spells });
+    return Some(ArmyListViewModel {
+        army,
+        spells,
+        rules,
+    });
 }
 
 fn parse_army(input: &String) -> Army {
@@ -218,6 +238,13 @@ fn view(model: &Model) -> Node<Msg> {
                 attrs! {At::Id => "spells", At::Rows => 10, At::Value => model.inputs.spells},
                 input_ev(Ev::Change, Msg::SpellsUpdated),
                 input_ev(Ev::KeyUp, Msg::SpellsUpdated)
+            ],
+            label![attrs![At::For => "rules"], "Rules"],
+            textarea![
+                C!["paste-area", "input"],
+                attrs! {At::Id => "rules", At::Rows => 10, At::Value => model.inputs.rules},
+                input_ev(Ev::Change, Msg::RulesUpdated),
+                input_ev(Ev::KeyUp, Msg::RulesUpdated)
             ],
         ],
         raw!(&rendered_list)
