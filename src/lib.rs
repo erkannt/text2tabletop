@@ -228,23 +228,26 @@ fn view(model: &Model) -> Node<Msg> {
             label![attrs![At::For => "list"], "Army"],
             textarea![
                 C!["paste-area", "input"],
-                attrs! {At::Id => "list", At::Rows => 20, At::Value => model.inputs.army},
+                attrs! {At::Id => "list", At::Rows => 20},
                 input_ev(Ev::Change, Msg::ArmyUpdated),
-                input_ev(Ev::KeyUp, Msg::ArmyUpdated)
+                input_ev(Ev::KeyUp, Msg::ArmyUpdated),
+                model.inputs.army.clone()
             ],
             label![attrs![At::For => "spells"], "Spells"],
             textarea![
                 C!["paste-area", "input"],
-                attrs! {At::Id => "spells", At::Rows => 13, At::Value => model.inputs.spells},
+                attrs! {At::Id => "spells", At::Rows => 13},
                 input_ev(Ev::Change, Msg::SpellsUpdated),
-                input_ev(Ev::KeyUp, Msg::SpellsUpdated)
+                input_ev(Ev::KeyUp, Msg::SpellsUpdated),
+                model.inputs.spells.clone()
             ],
             label![attrs![At::For => "rules"], "Rules"],
             textarea![
                 C!["paste-area", "input"],
-                attrs! {At::Id => "rules", At::Rows => 10, At::Value => model.inputs.rules},
+                attrs! {At::Id => "rules", At::Rows => 10},
                 input_ev(Ev::Change, Msg::RulesUpdated),
-                input_ev(Ev::KeyUp, Msg::RulesUpdated)
+                input_ev(Ev::KeyUp, Msg::RulesUpdated),
+                model.inputs.rules.clone()
             ],
         ],
         raw!(&rendered_list)
