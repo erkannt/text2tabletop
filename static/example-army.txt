@@ -1,0 +1,19 @@
+++ Ratmen [AOFS 305pts] ++
+
+Champion [1] Q5+ D5+ | 50pts | Hero, Tough(3), 1x Priest(Wizard(1))
+Hand Weapon (A3)
+
+2x Storm Veteran [1] Q4+ D4+ | 15pts | Fearless
+Halberd (A1, AP(1), Rending)
+
+3x Night Scout [1] Q4+ D5+ | 20pts | Scout, Stealth, Strider
+Dual Hand Weapon (A2)
+
+Monks [3] Q5+ D5+ | 40pts | Furious
+3x Censer Flails (A1, Poison)
+
+Rat Ogre [1] Q4+ D4+ | 45pts | Furious, Tough(3)
+Great Weapon (A3, AP(2))
+
+Storm Ogre [1] Q3+ D3+ | 80pts | Fearless, Furious, Tough(3)
+Gatling-Fists (18", A3, AP(1)), Stomp (A2)

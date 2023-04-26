@@ -51,6 +51,8 @@ enum Msg {
     ArmyUpdated(String),
     SpellsUpdated(String),
     RulesUpdated(String),
+    SeeAnExample,
+    ClearAll,
 }
 
 fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
@@ -79,6 +81,18 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
             };
             model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
+        Msg::SeeAnExample => {
+            model.inputs = Inputs {
+                army: include_str!("../static/example-army.txt").to_string(),
+                spells: include_str!("../static/example-spells.txt").to_string(),
+                rules: include_str!("../static/example-rules.txt").to_string(),
+            };
+            model.army_list_view_model = parse_army_list_view_model(&model.inputs);
+        }
+        Msg::ClearAll => {
+            model.inputs = Inputs::default();
+            window().location().reload();
+        }
     }
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
 }
@@ -101,6 +115,19 @@ fn view(model: &Model) -> Node<Msg> {
         None => "".to_string(),
     };
     div![
+        nav![
+            C!["inputs", "input-helpers"],
+            a![
+                attrs![At::Href => "#"],
+                input_ev(Ev::Click, |_| Msg::SeeAnExample),
+                "See an example"
+            ],
+            a![
+                attrs![At::Href => "#"],
+                input_ev(Ev::Click, |_| Msg::ClearAll),
+                "Clear all"
+            ],
+        ],
         div![
             C!["inputs"],
             label![attrs![At::For => "list"], "Army"],

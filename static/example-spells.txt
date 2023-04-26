@@ -1,0 +1,11 @@
+Filth (4+): Target 2 friendly units within 6” get Poison next time they fight in melee.
+
+Cracks (4+): Target enemy unit within 6” takes 3 hits with AP(2).
+
+Sickness (5+): Target 2 enemy units within 18” get -1 to hit next time they shoot.
+
+Lightning (5+): Target enemy unit within 6" takes 1 hit with AP(4) and Deadly(3).
+
+Frenzy (6+): Target 2 friendly units within 6” get +3" next time they Advance, or +6" next time they Charge/Rush.
+
+Pestilence (6+): Target enemy unit within 6” rolls as many dice as models in it, and takes 1 hit for each 2+ rolled.
