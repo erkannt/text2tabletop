@@ -235,7 +235,7 @@ fn view(model: &Model) -> Node<Msg> {
             label![attrs![At::For => "spells"], "Spells"],
             textarea![
                 C!["paste-area", "input"],
-                attrs! {At::Id => "spells", At::Rows => 10, At::Value => model.inputs.spells},
+                attrs! {At::Id => "spells", At::Rows => 13, At::Value => model.inputs.spells},
                 input_ev(Ev::Change, Msg::SpellsUpdated),
                 input_ev(Ev::KeyUp, Msg::SpellsUpdated)
             ],
