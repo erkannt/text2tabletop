@@ -1,9 +1,10 @@
 #![allow(clippy::wildcard_imports)]
 
 use askama::Template;
-use regex::Regex;
 use seed::{prelude::*, *};
 use serde::{Deserialize, Serialize};
+
+mod army_list;
 
 const STORAGE_KEY: &str = "text2tabletop";
 
@@ -40,27 +41,9 @@ impl Default for Inputs {
 #[derive(Template)]
 #[template(path = "army-list.html")]
 struct ArmyListViewModel {
-    army: Army,
+    army: army_list::Army,
     spells: Option<Vec<String>>,
     rules: Option<Vec<String>>,
-}
-
-struct Army {
-    name: String,
-    points: String,
-    system: String,
-    units: Vec<Unit>,
-}
-
-struct Unit {
-    name: String,
-    count: String,
-    models: String,
-    points: String,
-    special_rules: String,
-    quality: String,
-    defense: String,
-    weapons: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -105,116 +88,11 @@ fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
         return None;
     }
 
-    let army = parse_army(&inputs.army);
-    let spells = match &inputs.spells.trim().is_empty() {
-        true => None,
-        false => Some(parse_spells(&inputs.spells)),
-    };
-    let rules = match &inputs.rules.trim().is_empty() {
-        true => None,
-        false => Some(parse_spells(&inputs.rules)),
-    };
-
     return Some(ArmyListViewModel {
-        army,
-        spells,
-        rules,
+        army: army_list::parse_army(&inputs.army),
+        spells: army_list::parse_spells(&inputs.spells),
+        rules: army_list::parse_spells(&inputs.rules),
     });
-}
-
-fn parse_army(input: &String) -> Army {
-    Army {
-        name: extract_single("name", Regex::new(r"^\+\+ (.*) \[").unwrap(), &input),
-        points: extract_single("point", Regex::new(r"([\d]+)pts\] \+\+").unwrap(), &input),
-        system: extract_single("system", Regex::new(r"\[([[:alpha:]]+) ").unwrap(), &input),
-        units: parse_units(&input),
-    }
-}
-
-fn extract_single_or(default: &str, re: Regex, input: &str) -> String {
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .map(|s| s.to_string())
-        .unwrap_or(default.to_string())
-}
-
-fn extract_single(name: &str, re: Regex, input: &str) -> String {
-    re.captures(input)
-        .and_then(|cap| cap.get(1))
-        .and_then(|mat| input.get(mat.range()))
-        .map(|s| s.to_string())
-        .unwrap_or(format!("[error: can't extract {}]", name))
-}
-
-fn parse_units(input: &str) -> Vec<Unit> {
-    struct State {
-        partial: Option<PartialUnit>,
-        completed: Vec<Unit>,
-    }
-
-    struct PartialUnit(String);
-
-    fn handle_line(mut state: State, line: &str) -> State {
-        if line.starts_with("++") {
-            return state;
-        }
-        if line.is_empty() {
-            return state;
-        }
-        match state.partial {
-            None => state.partial = Some(PartialUnit(line.to_string())),
-            Some(partial) => {
-                state.partial = None;
-                state.completed.push(Unit {
-                    name: extract_single(
-                        "name",
-                        Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
-                        &partial.0,
-                    ),
-                    count: extract_single_or("1", Regex::new(r"^([\d+])x ").unwrap(), &partial.0),
-                    models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
-                    points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
-                    quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),
-                    defense: extract_single(
-                        "defense",
-                        Regex::new(r"D(\d+)\+").unwrap(),
-                        &partial.0,
-                    ),
-                    special_rules: extract_single(
-                        "special_rules",
-                        Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
-                        &partial.0,
-                    ),
-                    weapons: line
-                        .split("), ")
-                        .into_iter()
-                        .map(|extract| format!("{})", extract))
-                        .collect(),
-                })
-            }
-        }
-        return state;
-    }
-
-    let result = input.lines().fold(
-        State {
-            partial: None,
-            completed: vec![],
-        },
-        handle_line,
-    );
-
-    return result.completed;
-}
-
-fn parse_spells(input: &str) -> Vec<String> {
-    input
-        .lines()
-        .into_iter()
-        .filter(|line| !line.trim().is_empty())
-        .map(|line| line.to_string())
-        .collect()
 }
 
 fn view(model: &Model) -> Node<Msg> {
