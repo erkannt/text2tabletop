@@ -70,11 +70,7 @@ fn parse_units(input: &str) -> Vec<Unit> {
                         Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
                         &partial.0,
                     ),
-                    weapons: line
-                        .split("), ")
-                        .into_iter()
-                        .map(|extract| format!("{})", extract))
-                        .collect(),
+                    weapons: parse_weapons(line),
                 })
             }
         }
@@ -90,4 +86,23 @@ fn parse_units(input: &str) -> Vec<Unit> {
     );
 
     return result.completed;
+}
+
+fn parse_weapons(line: &str) -> Vec<String> {
+    line.split("), ")
+        .into_iter()
+        .map(|extract| format!("{}", extract))
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::army_list::army::parse_weapons;
+
+    #[test]
+    fn single_weapon() {
+        let parsed = parse_weapons("Hand Weapon (A3)");
+        let expected = vec!["Hand Weapon (A3)"];
+        assert_eq!(parsed, expected)
+    }
 }
