@@ -92,16 +92,14 @@ fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
     if inputs.army.trim().is_empty() {
         return None;
     }
-    if inputs.spells.trim().is_empty() {
-        return Some(ArmyListViewModel {
-            army: parse_army(&inputs.army),
-            spells: None,
-        });
-    }
-    return Some(ArmyListViewModel {
-        army: parse_army(&inputs.army),
-        spells: Some(parse_spells(&inputs.spells)),
-    });
+
+    let army = parse_army(&inputs.army);
+    let spells = match &inputs.spells.trim().is_empty() {
+        true => None,
+        false => Some(parse_spells(&inputs.spells)),
+    };
+
+    return Some(ArmyListViewModel { army, spells });
 }
 
 fn parse_army(input: &String) -> Army {
