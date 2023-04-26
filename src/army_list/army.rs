@@ -89,9 +89,10 @@ fn parse_units(input: &str) -> Vec<Unit> {
 }
 
 fn parse_weapons(line: &str) -> Vec<String> {
-    line.split("), ")
-        .into_iter()
-        .map(|extract| format!("{}", extract))
+    let re = Regex::new(r".+ \(A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)").unwrap();
+
+    re.captures_iter(line)
+        .map(|cap| cap[0].to_string())
         .collect()
 }
 
@@ -100,9 +101,23 @@ mod tests {
     use crate::army_list::army::parse_weapons;
 
     #[test]
-    fn single_weapon() {
+    fn simple_weapon() {
         let parsed = parse_weapons("Hand Weapon (A3)");
         let expected = vec!["Hand Weapon (A3)"];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn weapon_with_armor_piercing() {
+        let parsed = parse_weapons("Hand Weapon (A3, AP(1))");
+        let expected = vec!["Hand Weapon (A3, AP(1))"];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn weapon_with_ap_and_rule() {
+        let parsed = parse_weapons("Hand Weapon (A3, AP(1), Rending)");
+        let expected = vec!["Hand Weapon (A3, AP(1), Rending)"];
         assert_eq!(parsed, expected)
     }
 }
