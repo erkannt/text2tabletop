@@ -42,8 +42,8 @@ impl Default for Inputs {
 #[template(path = "army-list.html")]
 struct ArmyListViewModel {
     army: army_list::Army,
-    spells: Option<Vec<String>>,
-    rules: Option<Vec<String>>,
+    spells: Option<Vec<army_list::Definition>>,
+    rules: Option<Vec<army_list::Definition>>,
 }
 
 #[derive(Clone)]
@@ -90,8 +90,8 @@ fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
 
     return Some(ArmyListViewModel {
         army: army_list::parse_army(&inputs.army),
-        spells: army_list::parse_spells(&inputs.spells),
-        rules: army_list::parse_spells(&inputs.rules),
+        spells: army_list::parse_definitions(&inputs.spells),
+        rules: army_list::parse_definitions(&inputs.rules),
     });
 }
 

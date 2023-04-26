@@ -33,7 +33,7 @@
   <h2>Spells</h2>
   <ol class="spells__list">
     {% for spell in spells %}
-    <li>{{spell}}</li>
+    <li><b>{{spell.name}}:</b> {{spell.value}}</li>
     {% endfor %}
   </ol>
   {%when None%} {% endmatch%}
@@ -43,7 +43,7 @@
   <h2>Rules</h2>
   <ol class="rules__list">
     {% for rule in rules %}
-    <li>{{rule}}</li>
+    <li><b>{{rule.name}}:</b> {{rule.value}}</li>
     {% endfor %}
   </ol>
   {%when None%} {% endmatch%}
