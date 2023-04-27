@@ -54,6 +54,9 @@ fn parse_units(input: &str) -> Vec<Unit> {
         if line.is_empty() {
             return state;
         }
+        if line.starts_with("#") {
+            return state;
+        }
         match state.partial {
             None => state.partial = Some(PartialUnit(line.to_string())),
             Some(partial) => {
