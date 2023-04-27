@@ -1,0 +1,67 @@
+use regex::Regex;
+
+#[derive(Debug, PartialEq)]
+pub enum Weapon {
+    Melee(String),
+    Ranged(String),
+}
+
+pub fn parse_weapons(line: &str) -> Vec<Weapon> {
+    let re =
+        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)")
+            .unwrap();
+
+    re.captures_iter(line)
+        .map(|cap| cap[0].trim().to_string())
+        .map(|weapon| match weapon.contains("\"") {
+            true => Weapon::Ranged(weapon),
+            false => Weapon::Melee(weapon),
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::{parse_weapons, Weapon};
+
+    #[test]
+    fn simple_weapon() {
+        let parsed = parse_weapons("Hand Weapon (A3)");
+        let expected = vec![Weapon::Melee("Hand Weapon (A3)".to_string())];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn weapon_with_armor_piercing() {
+        let parsed = parse_weapons("Hand Weapon (A3, AP(1))");
+        let expected = vec![Weapon::Melee("Hand Weapon (A3, AP(1))".to_string())];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn weapon_with_ap_and_rule() {
+        let parsed = parse_weapons("Hand Weapon (A3, AP(1), Rending)");
+        let expected = vec![Weapon::Melee(
+            "Hand Weapon (A3, AP(1), Rending)".to_string(),
+        )];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn multiple_weapons() {
+        let parsed = parse_weapons("Gatling-Fists (18\", A3, AP(1)), Stomp (A2)");
+        let expected = vec![
+            Weapon::Ranged("Gatling-Fists (18\", A3, AP(1))".to_string()),
+            Weapon::Melee("Stomp (A2)".to_string()),
+        ];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn multiple_models() {
+        let parsed = parse_weapons("2x Hand Weapon (A1)");
+        let expected = vec![Weapon::Melee("2x Hand Weapon (A1)".to_string())];
+        assert_eq!(parsed, expected)
+    }
+}
