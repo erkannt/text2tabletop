@@ -8,7 +8,7 @@ pub enum Weapon {
 
 pub fn parse_weapons(line: &str) -> Vec<Weapon> {
     let re =
-        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+)??\)")
+        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+(?:\([0-9]+\))??)*\)")
             .unwrap();
 
     re.captures_iter(line)
@@ -62,6 +62,23 @@ mod tests {
     fn multiple_models() {
         let parsed = parse_weapons("2x Hand Weapon (A1)");
         let expected = vec![Weapon::Melee("2x Hand Weapon (A1)".to_string())];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn muliple_rules() {
+        let parsed = parse_weapons("Power Staff (A3, Warp, Rending)");
+        let expected = vec![Weapon::Melee("Power Staff (A3, Warp, Rending)".to_string())];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn rules_with_brackets() {
+        let parsed = parse_weapons("CCW (A1), Fusion Rifle (12\", A1, AP(4), Deadly(3))");
+        let expected = vec![
+            Weapon::Melee("CCW (A1)".to_string()),
+            Weapon::Ranged("Fusion Rifle (12\", A1, AP(4), Deadly(3))".to_string()),
+        ];
         assert_eq!(parsed, expected)
     }
 }
