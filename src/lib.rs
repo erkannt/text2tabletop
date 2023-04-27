@@ -91,7 +91,7 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
         }
         Msg::ClearAll => {
             model.inputs = Inputs::default();
-            window().location().reload();
+            window().location().reload().unwrap_or_default();
         }
     }
     LocalStorage::insert(STORAGE_KEY, &model.inputs).expect("save to LocalStorage failed");
