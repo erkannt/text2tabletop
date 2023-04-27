@@ -120,6 +120,36 @@ ol {
   }
 }
 
+*,
+:after,
+:before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.unit_stat {
+  position: relative;
+  padding-right: 1.2rem;
+}
+
+.unit_stat::after {
+  background-size: contain;
+  background-repeat: no-repeat;
+  content: "";
+  height: 100%;
+  width: 0.8rem;
+  position: absolute;
+}
+
+.unit_stat--quality::after {
+  background-image: url("icons/quality.svg");
+}
+
+.unit_stat--defense::after {
+  background-image: url("icons/defense.svg");
+}
+
 .unit__wrapper {
   display: flex;
   justify-content: space-between;
