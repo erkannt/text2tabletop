@@ -1,0 +1,77 @@
+.units {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.unit {
+  border-top: 0.1rem solid black;
+  padding-top: 0.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.unit__name {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: bold;
+  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+    "URW Bookman L", "Georgia Pro", Georgia, serif;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.unit__rules {
+  margin-bottom: 0.6rem;
+}
+
+.unit__main-stats {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: bold;
+  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+    "URW Bookman L", "Georgia Pro", Georgia, serif;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
+
+.unit_stat {
+  position: relative;
+  padding-right: 0.8rem;
+  padding-left: 0.4rem;
+}
+
+.unit_stat::after {
+  background-size: contain;
+  background-repeat: no-repeat;
+  content: "";
+  height: 100%;
+  width: 0.8rem;
+  position: absolute;
+}
+
+.unit_stat--quality::after {
+  background-image: url("icons/quality.svg");
+}
+
+.unit_stat--defense::after {
+  background-image: url("icons/defense.svg");
+}
+
+.unit__remaining-stats {
+  font-weight: lighter;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.unit__weapons {
+  list-style: none;
+  padding: 0;
+}

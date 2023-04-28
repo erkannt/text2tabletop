@@ -1,0 +1,26 @@
+.rules {
+  border-top: 0.1rem solid black;
+  padding-top: 0.4rem;
+  margin-bottom: 1rem;
+  break-inside: avoid;
+  h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-weight: bold;
+    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+      "URW Bookman L", "Georgia Pro", Georgia, serif;
+  }
+}
+
+.rules__list {
+  list-style: none;
+  padding: 0;
+  column-count: 3;
+  column-gap: 2rem;
+  li {
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+    break-inside: avoid;
+  }
+}

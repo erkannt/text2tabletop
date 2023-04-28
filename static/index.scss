@@ -1,3 +1,8 @@
+@use "./non-printed";
+@use "./units";
+@use "./spells";
+@use "./rules";
+
 html {
   max-width: 100ch;
   padding: 3em 1em;
@@ -39,45 +44,12 @@ ol {
   list-style-position: inside;
 }
 
-.instructions,
-.inputs {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 3em 0 1em;
-  }
-  margin: 3em 0 1em;
-  margin-bottom: 3rem;
-  @media print {
-    display: none;
-  }
-}
-
-.input {
-  margin-bottom: 2rem;
-}
-
-.paste-area {
-  width: 100%;
-  resize: vertical;
-}
-
 @media print {
   html,
   body {
     font-size: 11pt;
     max-width: unset;
     padding: 0;
-  }
-}
-
-.input-helpers {
-  margin-bottom: 1rem;
-  a {
-    padding-right: 1rem;
   }
 }
 
@@ -101,136 +73,6 @@ ol {
   font-weight: lighter;
   font-size: 1.2rem;
   line-height: 1;
-}
-
-.units {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  list-style: none;
-  padding: 0;
-  margin-bottom: 2rem;
-}
-
-.unit {
-  border-top: 0.1rem solid black;
-  padding-top: 0.4rem;
-  margin-bottom: 1rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-}
-
-.unit__name {
-  font-size: 1.5rem;
-  line-height: 1;
-  font-weight: bold;
-  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
-    "URW Bookman L", "Georgia Pro", Georgia, serif;
-  margin-top: 0;
-  margin-bottom: 0.6rem;
-}
-
-.unit__rules {
-  margin-bottom: 0.6rem;
-}
-
-.unit__main-stats {
-  font-size: 1.5rem;
-  line-height: 1;
-  font-weight: bold;
-  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
-    "URW Bookman L", "Georgia Pro", Georgia, serif;
-  margin-top: 0;
-  margin-bottom: 0.2rem;
-}
-
-.unit_stat {
-  position: relative;
-  padding-right: 0.8rem;
-  padding-left: 0.4rem;
-}
-
-.unit_stat::after {
-  background-size: contain;
-  background-repeat: no-repeat;
-  content: "";
-  height: 100%;
-  width: 0.8rem;
-  position: absolute;
-}
-
-.unit_stat--quality::after {
-  background-image: url("icons/quality.svg");
-}
-
-.unit_stat--defense::after {
-  background-image: url("icons/defense.svg");
-}
-
-.unit__remaining-stats {
-  font-weight: lighter;
-  font-size: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-}
-
-.unit__weapons {
-  list-style: none;
-  padding: 0;
-}
-
-.spells {
-  border-top: 0.1rem solid black;
-  padding-top: 0.4rem;
-  margin-bottom: 1rem;
-  break-inside: avoid;
-  h2 {
-    margin-bottom: 0.4rem;
-    font-size: 1.5rem;
-    line-height: 1;
-    font-weight: bold;
-    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
-      "URW Bookman L", "Georgia Pro", Georgia, serif;
-  }
-}
-
-.spells__list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
-  gap: 0.4rem 2rem;
-}
-
-.rules {
-  border-top: 0.1rem solid black;
-  padding-top: 0.4rem;
-  margin-bottom: 1rem;
-  break-inside: avoid;
-  h2 {
-    margin-bottom: 0.4rem;
-    font-size: 1.5rem;
-    line-height: 1;
-    font-weight: bold;
-    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
-      "URW Bookman L", "Georgia Pro", Georgia, serif;
-  }
-}
-
-.rules__list {
-  list-style: none;
-  padding: 0;
-  column-count: 3;
-  column-gap: 2rem;
-  li {
-    margin-bottom: 0.4rem;
-    font-size: 0.8rem;
-    break-inside: avoid;
-  }
 }
 
 @page {

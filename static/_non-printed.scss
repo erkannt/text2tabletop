@@ -1,0 +1,32 @@
+.instructions,
+.inputs {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 3em 0 1em;
+  }
+  margin: 3em 0 1em;
+  margin-bottom: 3rem;
+  @media print {
+    display: none;
+  }
+}
+
+.input {
+  margin-bottom: 2rem;
+}
+
+.paste-area {
+  width: 100%;
+  resize: vertical;
+}
+
+.input-helpers {
+  margin-bottom: 1rem;
+  a {
+    padding-right: 1rem;
+  }
+}
