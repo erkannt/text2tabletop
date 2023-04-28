@@ -15,3 +15,10 @@ pub fn extract_single(name: &str, re: Regex, input: &str) -> String {
         .map(|s| s.to_string())
         .unwrap_or(format!("[error: can't extract {}]", name))
 }
+
+pub fn extract_optional_single(re: Regex, input: &str) -> Option<String> {
+    re.captures(input)
+        .and_then(|cap| cap.get(1))
+        .and_then(|mat| input.get(mat.range()))
+        .map(|s| s.to_string())
+}

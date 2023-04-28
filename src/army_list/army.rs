@@ -1,5 +1,7 @@
 use regex::Regex;
 
+use crate::army_list::regex_helpers::extract_optional_single;
+
 use super::regex_helpers::{extract_single, extract_single_or};
 use super::weapons::{parse_weapons, Weapon};
 
@@ -15,6 +17,7 @@ pub struct Unit {
     pub count: String,
     pub models: String,
     pub points: String,
+    pub xp: Option<String>,
     pub special_rules: String,
     pub quality: String,
     pub defense: String,
@@ -67,9 +70,10 @@ fn parse_units(input: &str) -> Vec<Unit> {
                         Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
                         &partial.0,
                     ),
-                    count: extract_single_or("1", Regex::new(r"^([\d+])x ").unwrap(), &partial.0),
+                    count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &partial.0),
                     models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
                     points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
+                    xp: extract_optional_single(Regex::new(r"(\d+)XP").unwrap(), &partial.0),
                     quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),
                     defense: extract_single(
                         "defense",

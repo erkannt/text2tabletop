@@ -23,9 +23,11 @@
       </div>
       <div class="unit__remaining-stats">
         <span>{{unit.points}} pts </span>
-
-        {% if unit.models != "1" %} <span>{{unit.models}} models</span>{% endif
-        %} {% if unit.count != "1" %}<span>{{unit.count}}x</span>{% endif %}
+        {% match unit.xp%} {%when Some with (xp)%}
+        <span>{{xp}} xp </span>
+        {%when None%} {% endmatch%} {% if unit.models != "1" %}
+        <span>{{unit.models}} models</span>{% endif %} {% if unit.count != "1"
+        %}<span>{{unit.count}}x</span>{% endif %}
       </div>
     </div>
   </li>
