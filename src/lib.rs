@@ -12,6 +12,7 @@ fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
     let inputs: Inputs = LocalStorage::get(STORAGE_KEY).unwrap_or_default();
     Model {
         army_list_view_model: parse_army_list_view_model(&inputs),
+        notes: render_notes(&inputs.notes),
         inputs,
     }
 }
@@ -19,6 +20,7 @@ fn init(_: Url, _: &mut impl Orders<Msg>) -> Model {
 struct Model {
     inputs: Inputs,
     army_list_view_model: Option<ArmyListViewModel>,
+    notes: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -26,6 +28,7 @@ struct Inputs {
     army: String,
     spells: String,
     rules: String,
+    notes: String,
 }
 
 impl Default for Inputs {
@@ -34,6 +37,7 @@ impl Default for Inputs {
             army: Default::default(),
             spells: Default::default(),
             rules: Default::default(),
+            notes: Default::default(),
         }
     }
 }
@@ -51,6 +55,7 @@ enum Msg {
     ArmyUpdated(String),
     SpellsUpdated(String),
     RulesUpdated(String),
+    NotesUpdated(String),
     SeeAnExample,
     ClearAll,
 }
@@ -81,11 +86,20 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
             };
             model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
+        Msg::NotesUpdated(notes_input) => {
+            let old_inputs = model.inputs.clone();
+            model.inputs = Inputs {
+                notes: notes_input,
+                ..old_inputs
+            };
+            model.notes = render_notes(&model.inputs.notes);
+        }
         Msg::SeeAnExample => {
             model.inputs = Inputs {
                 army: include_str!("../static/example-army.txt").to_string(),
                 spells: include_str!("../static/example-spells.txt").to_string(),
                 rules: include_str!("../static/example-rules.txt").to_string(),
+                notes: "You can use markdown to write notes.\n\n### A heading\n\n- a bullet point\n- another with _italics_".to_string()
             };
             model.army_list_view_model = parse_army_list_view_model(&model.inputs);
         }
@@ -109,11 +123,27 @@ fn parse_army_list_view_model(inputs: &Inputs) -> Option<ArmyListViewModel> {
     });
 }
 
+fn render_notes(input: &str) -> Option<String> {
+    if input.trim().is_empty() {
+        return None;
+    };
+    let parser = pulldown_cmark::Parser::new(input);
+    let mut html_output = String::new();
+    pulldown_cmark::html::push_html(&mut html_output, parser);
+    return Some(html_output);
+}
+
 fn view(model: &Model) -> Node<Msg> {
     let rendered_list = match &model.army_list_view_model {
         Some(view_model) => view_model.render().unwrap_or_else(|err| format!("{}", err)),
         None => "".to_string(),
     };
+
+    let rendered_notes_section = match &model.notes {
+        Some(notes) => format!("<section class=\"notes\"><h2>Notes</h2>{}</section>", notes),
+        None => "".to_string(),
+    };
+
     div![
         nav![
             C!["inputs", "input-helpers"],
@@ -154,8 +184,17 @@ fn view(model: &Model) -> Node<Msg> {
                 input_ev(Ev::KeyUp, Msg::RulesUpdated),
                 model.inputs.rules.clone()
             ],
+            label![attrs![At::For => "notes"], "Notes"],
+            textarea![
+                C!["paste-area", "input"],
+                attrs! {At::Id => "notes", At::Rows => 10},
+                input_ev(Ev::Change, Msg::NotesUpdated),
+                input_ev(Ev::KeyUp, Msg::NotesUpdated),
+                model.inputs.notes.clone()
+            ],
         ],
-        raw!(&rendered_list)
+        raw!(&rendered_list),
+        raw!(&rendered_notes_section)
     ]
 }
 
