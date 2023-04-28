@@ -5,6 +5,7 @@ use crate::army_list::regex_helpers::extract_optional_single;
 use super::regex_helpers::{extract_single, extract_single_or};
 use super::weapons::{parse_weapons, Weapon};
 
+#[derive(Debug)]
 pub struct Army {
     pub name: String,
     pub points: String,
@@ -12,6 +13,7 @@ pub struct Army {
     pub units: Vec<Unit>,
 }
 
+#[derive(Debug)]
 pub struct Unit {
     pub name: String,
     pub count: String,

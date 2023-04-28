@@ -38,7 +38,7 @@ impl Default for Inputs {
     }
 }
 
-#[derive(Template)]
+#[derive(Template, Debug)]
 #[template(path = "army-list.html")]
 struct ArmyListViewModel {
     army: army_list::Army,

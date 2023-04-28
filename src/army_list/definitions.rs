@@ -2,6 +2,7 @@ use std::convert::identity;
 
 use regex::Regex;
 
+#[derive(Debug)]
 pub struct Definition {
     pub name: String,
     pub value: String,
