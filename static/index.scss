@@ -34,6 +34,11 @@ ol {
   color: #1d1d1d;
 }
 
+ul,
+ol {
+  list-style-position: inside;
+}
+
 .instructions,
 .inputs {
   h1,
