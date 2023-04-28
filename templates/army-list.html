@@ -5,14 +5,8 @@
 <ol class="units">
   {% for unit in army.units %}
   <li class="unit">
-    <div class="unit__headline">
-      <h2>{{unit.name}}</h2>
-      <span>
-        <span class="unit_stat unit_stat--quality">{{unit.quality}}</span
-        ><span class="unit_stat unit_stat--defense">{{unit.defense}}</span>
-      </span>
-    </div>
-    <div class="unit__wrapper">
+    <div class="unit__left">
+      <h2 class="unit__name">{{unit.name}}</h2>
       <div class="unit__main">
         <div class="unit__rules">{{unit.special_rules}}</div>
         <ul class="unit__weapons">
@@ -20,6 +14,12 @@
           <li>{{weapon}}</li>
           {% endfor %}
         </ul>
+      </div>
+    </div>
+    <div class="unit__right">
+      <div class="unit__main-stats">
+        <span class="unit_stat unit_stat--quality">{{unit.quality}}</span
+        ><span class="unit_stat unit_stat--defense">{{unit.defense}}</span>
       </div>
       <div class="unit__remaining-stats">
         <span>{{unit.points}} pts </span>

@@ -8,15 +8,23 @@ html {
     source-sans-pro, sans-serif;
 }
 
+*,
+:after,
+:before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  margin: 3em 0 1em;
   font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
     "URW Bookman L", "Georgia Pro", Georgia, serif;
+  margin: 0;
 }
 
 p,
@@ -28,6 +36,15 @@ ol {
 
 .instructions,
 .inputs {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 3em 0 1em;
+  }
+  margin: 3em 0 1em;
   margin-bottom: 3rem;
   @media print {
     display: none;
@@ -60,16 +77,6 @@ ol {
 }
 
 .army_list {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul {
-    margin: 0;
-  }
   font-size: 1rem;
 }
 
@@ -104,33 +111,39 @@ ol {
   border-top: 0.1rem solid black;
   padding-top: 0.4rem;
   margin-bottom: 1rem;
-}
-
-.unit__headline {
   display: flex;
+  gap: 1rem;
   justify-content: space-between;
-  margin-bottom: 0.4rem;
-  h2,
-  span {
-    font-size: 1.5rem;
-    line-height: 1;
-    font-weight: bold;
-    font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
-      "URW Bookman L", "Georgia Pro", Georgia, serif;
-  }
 }
 
-*,
-:after,
-:before {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+.unit__name {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: bold;
+  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+    "URW Bookman L", "Georgia Pro", Georgia, serif;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.unit__rules {
+  margin-bottom: 0.6rem;
+}
+
+.unit__main-stats {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: bold;
+  font-family: Superclarendon, "Bookman Old Style", "URW Bookman",
+    "URW Bookman L", "Georgia Pro", Georgia, serif;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
 }
 
 .unit_stat {
   position: relative;
-  padding-right: 1.2rem;
+  padding-right: 0.8rem;
+  padding-left: 0.4rem;
 }
 
 .unit_stat::after {
@@ -148,15 +161,6 @@ ol {
 
 .unit_stat--defense::after {
   background-image: url("icons/defense.svg");
-}
-
-.unit__wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-.unit__rules {
-  margin-bottom: 0.2rem;
 }
 
 .unit__remaining-stats {
