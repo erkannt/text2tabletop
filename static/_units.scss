@@ -53,6 +53,7 @@
   height: 100%;
   width: 0.8rem;
   position: absolute;
+  print-color-adjust: exact;
 }
 
 .unit_stat--quality::after {
