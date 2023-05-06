@@ -23,7 +23,7 @@ pub fn parse_definitions(input: &str) -> Option<Vec<Definition>> {
 }
 
 fn parse_definition(line: &str) -> Option<Definition> {
-    let captures = Regex::new(r"^(.+): (.*)$").unwrap().captures(line);
+    let captures = Regex::new(r"^([^:]+): (.*)$").unwrap().captures(line);
 
     let name = captures
         .as_ref()
