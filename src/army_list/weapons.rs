@@ -8,7 +8,7 @@ pub enum Weapon {
 
 pub fn parse_weapons(line: &str) -> Vec<Weapon> {
     let re =
-        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z ]+(?:\([0-9]+\))??)*\)")
+        Regex::new(r"(?:\d+x )??[A-Za-z -]+ \((?:\d+., )??A\d(?:, AP\(\d\))??(?:, [A-ZA-z- ]+(?:\([0-9]+\))??)*\)")
             .unwrap();
 
     re.captures_iter(line)
@@ -78,6 +78,18 @@ mod tests {
         let expected = vec![
             Weapon::Melee("CCW (A1)".to_string()),
             Weapon::Ranged("Fusion Rifle (12\", A1, AP(4), Deadly(3))".to_string()),
+        ];
+        assert_eq!(parsed, expected)
+    }
+
+    #[test]
+    fn rules_with_hyphens() {
+        let parsed = parse_weapons("Bash (A2), Bludgeon (A1, Impact(1)), Missile Pod (18\", A1, AP(2), Lock-On), Power Claw (A1, AP(1), Rending)");
+        let expected = vec![
+            Weapon::Melee("Bash (A2)".to_string()),
+            Weapon::Melee("Bludgeon (A1, Impact(1))".to_string()),
+            Weapon::Ranged("Missile Pod (18\", A1, AP(2), Lock-On)".to_string()),
+            Weapon::Melee("Power Claw (A1, AP(1), Rending)".to_string()),
         ];
         assert_eq!(parsed, expected)
     }
