@@ -99,9 +99,10 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 army: include_str!("../static/example-army.txt").to_string(),
                 spells: include_str!("../static/example-spells.txt").to_string(),
                 rules: include_str!("../static/example-rules.txt").to_string(),
-                notes: "You can use markdown to write notes.\n\n### A heading\n\n- a bullet point\n- another with _italics_".to_string()
+                notes: include_str!("../static/example-notes.txt").to_string(),
             };
             model.army_list_view_model = parse_army_list_view_model(&model.inputs);
+            model.notes = render_notes(&model.inputs.notes);
         }
         Msg::ClearAll => {
             model.inputs = Inputs::default();

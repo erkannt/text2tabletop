@@ -1,0 +1,10 @@
+You can use markdown to write notes.
+
+### A heading
+
+- a bullet point
+- another with _italics_
+
+You can even include images.
+
+![](https://external-preview.redd.it/NZivavkgaYouaP3r6sVaIb-tBjxrqrxXJr8rNre1PIk.jpg?width=960&crop=smart&auto=webp&s=371d037ed578f623b9b9aeabcae47ca7b1c4231c)
