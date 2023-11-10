@@ -45,6 +45,10 @@ ol {
   list-style-position: inside;
 }
 
+img {
+  max-width: 95%;
+}
+
 @media print {
   html,
   body {
