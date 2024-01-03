@@ -24,6 +24,7 @@ pub struct Unit {
     pub quality: String,
     pub defense: String,
     pub weapons: Vec<Weapon>,
+    pub joined_to: Option<String>,
 }
 
 impl std::fmt::Display for Weapon {
@@ -88,6 +89,7 @@ fn parse_units(input: &str) -> Vec<Unit> {
                         &partial.0,
                     ),
                     weapons: parse_weapons(line),
+                    joined_to: None,
                 })
             }
         }
