@@ -118,7 +118,7 @@ mod tests {
     fn unjoined_unit() {
         let parsed = parse_units(
             "2x Drained Soldiers [10] Q5+ D5+ | 85pts | Undead
-10x Spear (A1, Counter)",
+                    10x Spear (A1, Counter)",
         );
         let expected = Unit {
             name: "Drained Soldiers".to_string(),
@@ -131,6 +131,31 @@ mod tests {
             defense: "5".to_string(),
             weapons: vec![Weapon::Melee("10x Spear (A1, Counter)".to_string())],
             joined_to: None,
+        };
+        assert_eq!(parsed[0], expected)
+    }
+
+    #[test]
+    fn joined_unit() {
+        let parsed = parse_units(
+            "Champion [1] Q4+ D4+ | 95pts | Hero, Tough(3), Undead, 1x Master Necromancer(Caster(3))
+                    Hand Weapon (A3)
+                    | Joined to:
+                    Drained Archers [10] Q5+ D5+ | 135pts | Undead, Banner
+                    10x Bow (24\", A1), 10x Hand Weapon (A1)
+                    ",
+        );
+        let expected = Unit {
+            name: "Champion".to_string(),
+            count: "1".to_string(),
+            models: "1".to_string(),
+            points: "95".to_string(),
+            xp: None,
+            special_rules: "Hero, Tough(3), Undead, 1x Master Necromancer(Caster(3))".to_string(),
+            quality: "4".to_string(),
+            defense: "4".to_string(),
+            weapons: vec![Weapon::Melee("Hand Weapon (A3)".to_string())],
+            joined_to: Some("Drained Archers".to_string()),
         };
         assert_eq!(parsed[0], expected)
     }
