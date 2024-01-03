@@ -13,7 +13,7 @@ pub struct Army {
     pub units: Vec<Unit>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Unit {
     pub name: String,
     pub count: String,
@@ -105,4 +105,33 @@ fn parse_units(input: &str) -> Vec<Unit> {
     );
 
     return result.completed;
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::army_list::{
+        army::{parse_units, Unit},
+        weapons::Weapon,
+    };
+
+    #[test]
+    fn unjoined_unit() {
+        let parsed = parse_units(
+            "2x Drained Soldiers [10] Q5+ D5+ | 85pts | Undead
+10x Spear (A1, Counter)",
+        );
+        let expected = Unit {
+            name: "Drained Soldiers".to_string(),
+            count: "2".to_string(),
+            models: "10".to_string(),
+            points: "85".to_string(),
+            xp: None,
+            special_rules: "Undead".to_string(),
+            quality: "5".to_string(),
+            defense: "5".to_string(),
+            weapons: vec![Weapon::Melee("10x Spear (A1, Counter)".to_string())],
+            joined_to: None,
+        };
+        assert_eq!(parsed[0], expected)
+    }
 }
