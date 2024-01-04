@@ -2,7 +2,7 @@
 
 Generate prettier printouts of your [OnePageRules](https://army-forge.onepagerules.com/) armies.
 
-Use it at [https://erkannt.github.io/text2tabletop/](https://erkannt.github.io/text2tabletop/)
+Use it at [text2tabletop.rknt.de](https://text2tabletop.rknt.de)
 
 ![](example-print.png)
 
