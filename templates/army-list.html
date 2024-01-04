@@ -14,8 +14,9 @@
           <li>{{weapon}}</li>
           {% endfor %}
         </ul>
-        {% match unit.joined_to %} {% when Some with (val) %} Joined to: {{ val
-        }} {% when None %} {% endmatch %}
+        {% match unit.joined_to %} {% when Some with (val) %}
+        <span class="unit__joined">Joined to: {{ val }} </span>{% when None %}
+        {% endmatch %}
       </div>
     </div>
     <div class="unit__right">
