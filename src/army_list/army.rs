@@ -52,6 +52,32 @@ fn parse_units(input: &str) -> Vec<Unit> {
     }
 
     fn handle_line(mut state: State, line: &str) -> State {
+        if state.partial.len() == 2 {
+            let first_line = &state.partial[0];
+            let second_line = &state.partial[1];
+            state.completed.push(Unit {
+                name: extract_single(
+                    "name",
+                    Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
+                    &first_line,
+                ),
+                count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &first_line),
+                models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &first_line),
+                points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &first_line),
+                xp: extract_optional_single(Regex::new(r"(\d+)XP").unwrap(), &first_line),
+                quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &first_line),
+                defense: extract_single("defense", Regex::new(r"D(\d+)\+").unwrap(), &first_line),
+                special_rules: extract_single(
+                    "special_rules",
+                    Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
+                    &first_line,
+                ),
+                weapons: parse_weapons(&second_line),
+                joined_to: None,
+            });
+            state.partial = vec![];
+            return state;
+        }
         if line.starts_with("++") {
             return state;
         }
@@ -61,55 +87,21 @@ fn parse_units(input: &str) -> Vec<Unit> {
         if line.starts_with("#") {
             return state;
         }
-        match state.partial.len() {
-            0 => state.partial = vec![line.to_string()],
-            _ => {
-                let first_line = &state.partial[0];
-                state.completed.push(Unit {
-                    name: extract_single(
-                        "name",
-                        Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
-                        &first_line,
-                    ),
-                    count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &first_line),
-                    models: extract_single(
-                        "models",
-                        Regex::new(r"\[(\d+)\]").unwrap(),
-                        &first_line,
-                    ),
-                    points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &first_line),
-                    xp: extract_optional_single(Regex::new(r"(\d+)XP").unwrap(), &first_line),
-                    quality: extract_single(
-                        "quality",
-                        Regex::new(r"Q(\d)\+").unwrap(),
-                        &first_line,
-                    ),
-                    defense: extract_single(
-                        "defense",
-                        Regex::new(r"D(\d+)\+").unwrap(),
-                        &first_line,
-                    ),
-                    special_rules: extract_single(
-                        "special_rules",
-                        Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
-                        &first_line,
-                    ),
-                    weapons: parse_weapons(line),
-                    joined_to: None,
-                });
-                state.partial = vec![];
-            }
-        }
+        state.partial.push(line.to_string());
         return state;
     }
 
-    let result = input.lines().fold(
-        State {
-            partial: vec![],
-            completed: vec![],
-        },
-        handle_line,
-    );
+    let with_newline_at_end_to_ensure_last_unit_processed = input.to_owned() + "\n";
+
+    let result = with_newline_at_end_to_ensure_last_unit_processed
+        .lines()
+        .fold(
+            State {
+                partial: vec![],
+                completed: vec![],
+            },
+            handle_line,
+        );
 
     return result.completed;
 }
@@ -124,8 +116,10 @@ mod tests {
     #[test]
     fn unjoined_unit() {
         let parsed = parse_units(
-            "2x Drained Soldiers [10] Q5+ D5+ | 85pts | Undead
-                    10x Spear (A1, Counter)",
+            "
+2x Drained Soldiers [10] Q5+ D5+ | 85pts | Undead
+10x Spear (A1, Counter)
+",
         );
         let expected = Unit {
             name: "Drained Soldiers".to_string(),
@@ -145,12 +139,13 @@ mod tests {
     #[test]
     fn joined_unit() {
         let parsed = parse_units(
-            "Champion [1] Q4+ D4+ | 95pts | Hero, Tough(3), Undead, 1x Master Necromancer(Caster(3))
-                    Hand Weapon (A3)
-                    | Joined to:
-                    Drained Archers [10] Q5+ D5+ | 135pts | Undead, Banner
-                    10x Bow (24\", A1), 10x Hand Weapon (A1)
-                    ",
+            "
+Champion [1] Q4+ D4+ | 95pts | Hero, Tough(3), Undead, 1x Master Necromancer(Caster(3))
+Hand Weapon (A3)
+| Joined to:
+Drained Archers [10] Q5+ D5+ | 135pts | Undead, Banner
+10x Bow (24\", A1), 10x Hand Weapon (A1)
+",
         );
         let expected = Unit {
             name: "Champion".to_string(),
