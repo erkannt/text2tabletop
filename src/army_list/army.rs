@@ -45,13 +45,22 @@ pub fn parse_army(input: &String) -> Army {
     }
 }
 
-fn to_unit(first_line: &String, second_line: &String) -> Unit {
-    Unit {
-        name: extract_single(
+fn to_unit(
+    first_line: &String,
+    second_line: &String,
+    joined_unit_first_line: Option<String>,
+) -> Unit {
+    println!("{:?}", joined_unit_first_line);
+    fn extract_unit_name(line: &String) -> String {
+        extract_single(
             "name",
             Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
-            &first_line,
-        ),
+            line,
+        )
+    }
+
+    Unit {
+        name: extract_unit_name(first_line),
         count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &first_line),
         models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &first_line),
         points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &first_line),
@@ -64,7 +73,7 @@ fn to_unit(first_line: &String, second_line: &String) -> Unit {
             &first_line,
         ),
         weapons: parse_weapons(&second_line),
-        joined_to: None,
+        joined_to: joined_unit_first_line.map(|line| extract_unit_name(&line)),
     }
 }
 
@@ -75,11 +84,20 @@ fn parse_units(input: &str) -> Vec<Unit> {
     }
 
     fn handle_line(mut state: State, line: &str) -> State {
-        if state.partial.len() == 2 {
+        if state.partial.len() == 2 && line.is_empty() {
             state
                 .completed
-                .push(to_unit(&state.partial[0], &state.partial[1]));
+                .push(to_unit(&state.partial[0], &state.partial[1], None));
             state.partial = vec![];
+            return state;
+        }
+        if state.partial.len() == 3 {
+            state.completed.push(to_unit(
+                &state.partial[0],
+                &state.partial[1],
+                Some(line.to_string()),
+            ));
+            state.partial = vec![line.to_string()];
             return state;
         }
         if line.starts_with("++") || line.starts_with("#") || line.is_empty() {
