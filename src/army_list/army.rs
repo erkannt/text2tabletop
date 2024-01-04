@@ -47,11 +47,9 @@ pub fn parse_army(input: &String) -> Army {
 
 fn parse_units(input: &str) -> Vec<Unit> {
     struct State {
-        partial: Option<PartialUnit>,
+        partial: Vec<String>,
         completed: Vec<Unit>,
     }
-
-    struct PartialUnit(String);
 
     fn handle_line(mut state: State, line: &str) -> State {
         if line.starts_with("++") {
@@ -63,34 +61,43 @@ fn parse_units(input: &str) -> Vec<Unit> {
         if line.starts_with("#") {
             return state;
         }
-        match state.partial {
-            None => state.partial = Some(PartialUnit(line.to_string())),
-            Some(partial) => {
-                state.partial = None;
+        match state.partial.len() {
+            0 => state.partial = vec![line.to_string()],
+            _ => {
+                let first_line = &state.partial[0];
                 state.completed.push(Unit {
                     name: extract_single(
                         "name",
                         Regex::new(r"^(?:[\d+]x )?([^\[]+) \[").unwrap(),
-                        &partial.0,
+                        &first_line,
                     ),
-                    count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &partial.0),
-                    models: extract_single("models", Regex::new(r"\[(\d+)\]").unwrap(), &partial.0),
-                    points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &partial.0),
-                    xp: extract_optional_single(Regex::new(r"(\d+)XP").unwrap(), &partial.0),
-                    quality: extract_single("quality", Regex::new(r"Q(\d)\+").unwrap(), &partial.0),
+                    count: extract_single_or("1", Regex::new(r"^(\d+)x ").unwrap(), &first_line),
+                    models: extract_single(
+                        "models",
+                        Regex::new(r"\[(\d+)\]").unwrap(),
+                        &first_line,
+                    ),
+                    points: extract_single("points", Regex::new(r"(\d+)pts").unwrap(), &first_line),
+                    xp: extract_optional_single(Regex::new(r"(\d+)XP").unwrap(), &first_line),
+                    quality: extract_single(
+                        "quality",
+                        Regex::new(r"Q(\d)\+").unwrap(),
+                        &first_line,
+                    ),
                     defense: extract_single(
                         "defense",
                         Regex::new(r"D(\d+)\+").unwrap(),
-                        &partial.0,
+                        &first_line,
                     ),
                     special_rules: extract_single(
                         "special_rules",
                         Regex::new(r"^.*\|.*\| (.*)$").unwrap(),
-                        &partial.0,
+                        &first_line,
                     ),
                     weapons: parse_weapons(line),
                     joined_to: None,
-                })
+                });
+                state.partial = vec![];
             }
         }
         return state;
@@ -98,7 +105,7 @@ fn parse_units(input: &str) -> Vec<Unit> {
 
     let result = input.lines().fold(
         State {
-            partial: None,
+            partial: vec![],
             completed: vec![],
         },
         handle_line,
